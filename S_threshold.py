@@ -9,7 +9,7 @@ from numba import jit
 cv2.imread -> BGR
 
 """
-img_src = r'xiraf.png'
+img_src = r'ziran_re.png'
 img_shape = cv2.imread(img_src).shape
 
 
@@ -20,9 +20,7 @@ def rgb_read(src):
 
 
 def fhh(h):
-    return 17 * math.exp(-((h-30)/11.46) ** 2) + \
-           30015 * math.exp(-((h-136.3)/100.1) ** 2) - \
-           29999 * math.exp(-((h-136.3)/100) ** 2)
+    return 17 * math.exp(-((h-30)/11.46) ** 2) + 30015 * math.exp(-((h-136.3)/100.1) ** 2) - 29999 * math.exp(-((h-136.3)/100) ** 2)
 
 
 def hvv(v):
@@ -61,8 +59,8 @@ def s_threshold(src):
         endtime = time.time()
         print('count = %d, timeUsage = %d ' % (count, endtime - starttime))
         count += 1
-
-    cv2.imwrite('xirS.png', img_out)
+    img_out = img_out[:,:,::-1]
+    cv2.imwrite('ziran_output.png', img_out)
 
 
 s_threshold(img_src)
