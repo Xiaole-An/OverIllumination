@@ -1,20 +1,26 @@
-from rgb2hsv import rgb2hsv, rgb22hsv
+import os.path
+
+from rgb2hsv import rgb2hsv
 import math
 import cv2
 import numpy as np
 import time
 from numba import jit
+from skimage import io, color
 
 """
 cv2.imread -> BGR
 
 """
-img_src = r'ziran_re.png'
-img_shape = cv2.imread(img_src).shape
+img_src = r'121_over1.png'
+img_shape = cv2.imread('data/'+img_src).shape
+name = img_src.split('.')[0]
+# a = os.path.join('result', name)+'_S.png'
+# print(a)
 
 
 def rgb_read(src):
-    img = cv2.imread(src)
+    img = cv2.imread('data/'+src)
     img_rgb = img[:, :, ::-1]
     return img_rgb
 
@@ -43,24 +49,27 @@ def s_threshold(src):
     gre = [0, 255, 0]
     img_out = np.zeros(img_shape, dtype='uint8')
     count = 0
+    img = rgb_read(src)
+    hsv = color.rgb2hsv(img)
     for length in range(img_shape[0]):
         starttime = time.time()
         for width in range(img_shape[1]):
-            img = rgb_read(src)
-            r, g, b = img[length, width, :]
-            h, s, v = rgb2hsv(r, g, b)
+            h, s, v = hsv[length, width, :]
+            h = h*180
+            s = s*255
+            v = v*255
             h_calculate = fhh(h)
             v_calculate = hvv(v)
             threshold = sth(v_calculate, h_calculate)
-            if threshold > s:
+            if threshold > s+3.2:
                 img_out[length, width, :] = gre
             else:
                 img_out[length, width, :] = img[length, width, :]
         endtime = time.time()
         print('count = %d, timeUsage = %d ' % (count, endtime - starttime))
         count += 1
-    img_out = img_out[:,:,::-1]
-    cv2.imwrite('ziran_output.png', img_out)
+    img_out = img_out[:, :, ::-1]
+    cv2.imwrite(os.path.join('result', name)+'_S+3-2.png', img_out)
 
 
 s_threshold(img_src)
